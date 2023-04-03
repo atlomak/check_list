@@ -5,7 +5,7 @@ from fastapi import Depends
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import sessionmaker
 
-from src.schemas.users import User
+from src.schemas.users import User, UserCreate
 from ._db import Base, get_session_factory
 
 
