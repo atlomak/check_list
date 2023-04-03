@@ -1,0 +1,7 @@
+fastapi[all]==0.89.1
+python-jose[cryptography]
+passlib[argon2]
+pytest==7.2.1
+httpx
+sqlalchemy
+psycopg2
