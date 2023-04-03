@@ -32,7 +32,7 @@ class UserDAO:
             user = User.from_orm(userdb)
             return user
 
-    def add_user(self, user: User):
+    def add_user(self, user: UserCreate):
         with self.Session() as session:
             userdb = UserDB(username=user.username, password_hash=user.password, email=user.email)
             session.add(userdb)
