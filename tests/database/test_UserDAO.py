@@ -1,5 +1,4 @@
 import pytest
-from sqlalchemy.orm import Session
 
 from src.database._db import SessionLocal, Base, engine
 from src.database.user_db import UserDAO, UserDB
@@ -33,6 +32,13 @@ def test_get_user_by_id(prepared_db):
     assert user.id == 1
     assert user.username == 'test'
     assert user.email == "test1@test.com"
+
+
+def test_get_user_by_id_not_found(prepared_db):
+    userdao = UserDAO(session_factory=SessionLocal)
+    user: User = userdao.get_user_by_id(4)
+
+    assert user is None
 
 
 def test_add_user(prepared_db):

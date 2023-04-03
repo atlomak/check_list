@@ -26,9 +26,11 @@ class UserDAO:
     def __init__(self, session_factory: Annotated[sessionmaker, Depends(get_session_factory)]):
         self.Session = session_factory
 
-    def get_user_by_id(self, id: int) -> User:
+    def get_user_by_id(self, id: int) -> User | None:
         with self.Session() as session:
             userdb: UserDB = session.query(UserDB).filter(UserDB.id == id).first()
+            if userdb is None:
+                return None
             user = User.from_orm(userdb)
             return user
 
