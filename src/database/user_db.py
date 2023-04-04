@@ -35,7 +35,7 @@ class UserDAO:
             return user
 
     def add_user(self, user: UserCreate):
-        with self.Session() as session:
+        with self.Session() as session, session.begin():
             userdb = UserDB(username=user.username, password_hash=user.password, email=user.email)
             session.add(userdb)
             session.commit()
