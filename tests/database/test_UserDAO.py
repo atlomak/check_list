@@ -4,20 +4,19 @@ from src.database._db import SessionLocal, Base, engine
 from src.database.user_db import UserDAO, UserDB
 from src.schemas.users import User, UserCreate
 
-db_user = UserDB(username='test', password_hash='test', email="test1@test.com")
-db_user2 = UserDB(username='test2', password_hash='test', email="test2@test.com")
-db_user3 = UserDB(username='test3', password_hash='test', email="test3@test.com")
 
 
 @pytest.fixture
 def prepared_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
+    db_user = UserDB(username='test', password_hash='test', email="test1@test.com")
+    db_user2 = UserDB(username='test2', password_hash='test', email="test2@test.com")
+    db_user3 = UserDB(username='test3', password_hash='test', email="test3@test.com")
     db.add(db_user)
     db.add(db_user2)
     db.add(db_user3)
     db.commit()
-    db.close()
     try:
         yield db
     finally:
@@ -50,4 +49,4 @@ def test_add_user(prepared_db):
 
     assert user.username == user_from_db.username
     assert user.email == user_from_db.email
-    assert 1 == user_from_db.id
+    assert 4 == user_from_db.id
