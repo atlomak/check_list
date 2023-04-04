@@ -5,7 +5,6 @@ from src.database.user_db import UserDAO, UserDB
 from src.schemas.users import User, UserCreate
 
 
-
 @pytest.fixture
 def prepared_db():
     Base.metadata.create_all(bind=engine)
@@ -36,6 +35,22 @@ def test_get_user_by_id(prepared_db):
 def test_get_user_by_id_not_found(prepared_db):
     userdao = UserDAO(session_factory=SessionLocal)
     user: User = userdao.get_user_by_id(4)
+
+    assert user is None
+
+
+def test_get_user_by_username(prepared_db):
+    userdao = UserDAO(session_factory=SessionLocal)
+    user: User = userdao.get_user_by_username("test")
+
+    assert user.id == 1
+    assert user.username == "test"
+    assert user.email == "test1@test.com"
+
+
+def test_get_user_by_username_not_found(prepared_db):
+    userdao = UserDAO(session_factory=SessionLocal)
+    user: User = userdao.get_user_by_username("not_test_name")
 
     assert user is None
 

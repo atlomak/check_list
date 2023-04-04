@@ -34,6 +34,14 @@ class UserDAO:
             user = User.from_orm(userdb)
             return user
 
+    def get_user_by_username(self, username: str) -> User | None:
+        with self.Session() as session:
+            userdb: UserDB = session.query(UserDB).filter(UserDB.username == username).first()
+            if userdb is None:
+                return None
+            user = User.from_orm(userdb)
+            return user
+
     def add_user(self, user: UserCreate):
         with self.Session() as session, session.begin():
             userdb = UserDB(username=user.username, password_hash=user.password, email=user.email)
