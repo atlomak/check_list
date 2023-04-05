@@ -22,3 +22,5 @@ class UserInDB(User):
 class UserCreate(UserBase):
     password: str
 
+class SafeUserCreate(UserBase):
+    password_hash: str
