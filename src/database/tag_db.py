@@ -22,7 +22,7 @@ class TagDAO:
     def __init__(self, session_factory: Annotated[sessionmaker, Depends(get_session_factory)]):
         self.Session = session_factory
 
-    def get_tag_by_id(self, id: int) -> Tag:
+    def get_tag_by_id(self, id: int) -> Tag | None:
         with self.Session() as session:
             tagdb: TagDB = session.query(TagDB).get(id)
         if tagdb is None:
@@ -30,7 +30,7 @@ class TagDAO:
         tag = Tag.from_orm(tagdb)
         return tag
 
-    def get_tag_by_name(self, name: str) -> Tag:
+    def get_tag_by_name(self, name: str) -> Tag | None:
         with self.Session() as session:
             tagdb = session.query(TagDB).filter(TagDB.name == name).first()
         if not tagdb:
@@ -67,7 +67,7 @@ class TagAlreadyExists(Exception):
         super().__init__(f"Tag with name {tag_name} already exists")
 
 
-class UserNotFound(Exception):
+class TagNotFound(Exception):
     def __init__(self, id: int):
         self.id = id
         super().__init__(f"Tag with id {id} not found")
