@@ -19,7 +19,7 @@ def db():
 # Sanity check of sqlalchemy
 
 def test_add_user(db):
-    user = UserDB(username='test', password_hash='test', email='test@test.com')
+    user = UserDB(username='test',name="Julia", surname="test", password_hash='test')
 
     db.add(user)
     db.commit()
@@ -31,8 +31,8 @@ def test_add_user(db):
 
 
 def test_add_user_with_same_username(db):
-    user = UserDB(username='test', password_hash='test', email="test@test.com")
-    user2 = UserDB(username='test', password_hash='test', email="test@test.com")
+    user = UserDB(username='test',name="Julia", surname="test", password_hash='test')
+    user2 = UserDB(username='test',name="Julia", surname="test", password_hash='test')
 
     with pytest.raises(IntegrityError):
         db.add(user)
@@ -41,7 +41,7 @@ def test_add_user_with_same_username(db):
 
 
 def test_modifying_user(db):
-    user = UserDB(username='test', password_hash='test', email="test@test.com")
+    user = UserDB(username='test',name="Julia", surname="test", password_hash='test')
 
     db.add(user)
     db.commit()
@@ -54,7 +54,7 @@ def test_modifying_user(db):
     db.commit()
     db.close()
 
-    user_after_modification = db.query(UserDB).filter(UserDB.email == 'test@test.com').first()
+    user_after_modification = db.query(UserDB).filter(UserDB.id == 1).first()
 
     assert len(db.query(UserDB).all()) == 1
     assert user_after_modification.username == 'test2'

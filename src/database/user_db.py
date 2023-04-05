@@ -13,9 +13,10 @@ class UserDB(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False)
+    name = Column(String(50), nullable=False)
+    surname = Column(String(50), nullable=False)
     password_hash = Column(String(128), nullable=False)
     is_superuser = Column(Boolean, default=False)
-    email = Column(String(50), unique=True, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __repr__(self):
@@ -44,6 +45,6 @@ class UserDAO:
 
     def add_user(self, user: UserCreate):
         with self.Session() as session, session.begin():
-            userdb = UserDB(username=user.username, password_hash=user.password, email=user.email)
+            userdb = UserDB(username=user.username, name=user.name, surname=user.surname, password_hash=user.password)
             session.add(userdb)
             session.commit()

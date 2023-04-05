@@ -9,9 +9,9 @@ from src.schemas.users import User, UserCreate
 def prepared_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    db_user = UserDB(username='test', password_hash='test', email="test1@test.com")
-    db_user2 = UserDB(username='test2', password_hash='test', email="test2@test.com")
-    db_user3 = UserDB(username='test3', password_hash='test', email="test3@test.com")
+    db_user = UserDB(username='test', name="adam", surname="smith", password_hash='test')
+    db_user2 = UserDB(username='test2', name="john", surname="smith", password_hash='test')
+    db_user3 = UserDB(username='test3', name="chris", surname="smith", password_hash='test')
     db.add(db_user)
     db.add(db_user2)
     db.add(db_user3)
@@ -29,7 +29,8 @@ def test_get_user_by_id(prepared_db):
 
     assert user.id == 1
     assert user.username == 'test'
-    assert user.email == "test1@test.com"
+    assert user.name == 'adam'
+    assert user.surname == 'smith'
 
 
 def test_get_user_by_id_not_found(prepared_db):
@@ -45,7 +46,8 @@ def test_get_user_by_username(prepared_db):
 
     assert user.id == 1
     assert user.username == "test"
-    assert user.email == "test1@test.com"
+    assert user.name == "adam"
+    assert user.surname == "smith"
 
 
 def test_get_user_by_username_not_found(prepared_db):
@@ -57,11 +59,10 @@ def test_get_user_by_username_not_found(prepared_db):
 
 def test_add_user(prepared_db):
     userdao = UserDAO(session_factory=SessionLocal)
-    user = UserCreate(username='test4', password='test', email="test4@test.com")
+    user = UserCreate(username='test4', name="adam", surname="Kowalski", password='test')
     userdao.add_user(user)
 
     user_from_db = prepared_db.query(UserDB).filter(UserDB.username == 'test4').first()
 
     assert user.username == user_from_db.username
-    assert user.email == user_from_db.email
     assert 4 == user_from_db.id
