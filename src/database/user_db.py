@@ -3,9 +3,10 @@ from typing import Annotated
 
 from fastapi import Depends
 from sqlalchemy import Column, Integer, String, Boolean, DateTime
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from src.schemas.users import User, UserCreate
+from src.schemas.users import User, SafeUserCreate
 from ._db import Base, get_session_factory
 
 
@@ -43,8 +44,49 @@ class UserDAO:
             user = User.from_orm(userdb)
             return user
 
-    def add_user(self, user: UserCreate):
+    def get_all_users(self) -> list[User]:
+        with self.Session() as session:
+            users = session.query(UserDB).all()
+            return [User.from_orm(user) for user in users]
+
+    def add_user(self, user: SafeUserCreate):
+        try:
+            with self.Session() as session, session.begin():
+                userdb = UserDB(username=user.username, name=user.name, surname=user.surname,
+                                password_hash=user.password_hash)
+                session.add(userdb)
+                session.commit()
+        except IntegrityError as e:
+            raise UserAlreadyExists(user.username) from e
+
+    def modify_user(self, id: int, *args, **kwargs):
         with self.Session() as session, session.begin():
-            userdb = UserDB(username=user.username, name=user.name, surname=user.surname, password_hash=user.password)
-            session.add(userdb)
+            userdb: UserDB = session.query(UserDB).filter(UserDB.id == id).first()
+            if userdb is None:
+                raise UserNotFound(id)
+            for key, value in kwargs.items():
+                if hasattr(userdb, key):
+                    setattr(userdb, key, value)
+                else:
+                    raise AttributeError(f'UserDB has no attribute {key}')
             session.commit()
+
+    def delete_user(self, id: int):
+        with self.Session() as session, session.begin():
+            userdb: UserDB = session.query(UserDB).filter(UserDB.id == id).first()
+            if userdb is None:
+                raise UserNotFound(id)
+            session.delete(userdb)
+            session.commit()
+
+
+class UserAlreadyExists(Exception):
+    def __int__(self, username: str):
+        self.username = username
+        super().__init__(f'User with username {username} already exists')
+
+
+class UserNotFound(Exception):
+    def __int__(self, id: int):
+        self.id = id
+        super().__init__(f'User with id {id} not found')
