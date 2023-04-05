@@ -72,7 +72,7 @@ class TaskDAO:
         except IntegrityError as e:
             raise TaskAlreadyExists(task_name=task.name) from e
 
-    def modify_task(self,id: int, *args, **kwargs):
+    def modify_task(self, id: int, *args, **kwargs):
         with self.Session() as session, session.begin():
             taskdb = session.query(TaskDB).get(id)
             if not taskdb:
@@ -89,10 +89,12 @@ class TaskDAO:
                     raise AttributeError(f"TaskDB has no attribute {key}")
             session.commit()
 
+
 class TaskAlreadyExists(Exception):
     def __init__(self, task_name):
         self.task_name = task_name
         super().__init__(f"Task with name {task_name} already exists")
+
 
 class TaskNotFound(Exception):
     def __init__(self, id):

@@ -119,7 +119,7 @@ def test_add_task_already_in_db(prepared_db):
 
 def test_task_modify_add_existing_prerequisites(prepared_db):
     taskdao = TaskDAO(session_factory=SessionLocal)
-    task = Task(id = 1, name="test1",description="test1", prerequisite_tasks=[])
+    task = Task(id=1, name="test1", description="test1", prerequisite_tasks=[])
 
     taskdao.modify_task(2, prerequisite_tasks=[task])
 
