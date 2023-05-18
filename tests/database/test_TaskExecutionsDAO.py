@@ -15,19 +15,22 @@ def prepared_db():
     task1 = TaskDB(name="test1", description="test1")
     task2 = TaskDB(name="test2", description="test2")
     task3 = TaskDB(name="test3", description="test3")
-    task4 = TaskDB(id=30, name="test3", description="test3")
+    task4 = TaskDB(id=30, name="test4", description="test3")
     user1 = UserDB(username='test', name="adam", surname="smith", password_hash='test')
 
     task_execution1 = TaskExecutionDB(task_id=1, user_id=1)
     task_execution2 = TaskExecutionDB(task_id=2, user_id=1)
-    task_execution2 = TaskExecutionDB(task_id=30, user_id=1)
+    task_execution3 = TaskExecutionDB(id=5, task_id=30, user_id=1)
 
     db.add(task1)
     db.add(task2)
     db.add(task3)
+    db.add(task4)
     db.add(user1)
+    db.commit()
     db.add(task_execution1)
     db.add(task_execution2)
+    db.add(task_execution3)
     db.commit()
     try:
         yield db
@@ -56,7 +59,7 @@ def test_get_task_executions_by_user_id(prepared_db: Session):
     task_execution_dao = TaskExecutionDAO(session_factory=SessionLocal)
     task_executions = task_execution_dao.get_task_executions_by_user(1)
 
-    assert len(task_executions) == 2
+    assert len(task_executions) == 3
     assert task_executions[0].id == 1
     assert task_executions[0].task_id == 1
 
@@ -65,7 +68,7 @@ def test_get_all_task_executions(prepared_db: Session):
     task_execution_dao = TaskExecutionDAO(session_factory=SessionLocal)
     task_executions = task_execution_dao.get_all_task_executions()
 
-    assert len(task_executions) == 2
+    assert len(task_executions) == 3
     assert task_executions[0].id == 1
     assert task_executions[0].task_id == 1
 

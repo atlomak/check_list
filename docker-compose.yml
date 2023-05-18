@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  web:
+    build:
+      target: src
+    ports:
+      - "8080:8080"
+    depends_on:
+      [db]
+    environment:
+      DB_USER: "test"
+      DB_PASSWORD: "test"
+      DB_NAME: "test"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+    command:
+      - pytest
+  db:
+    image: "postgres"
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test

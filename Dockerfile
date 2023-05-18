@@ -8,4 +8,4 @@ COPY src/ /code/src
 COPY tests/ /code/tests
 
 FROM src as test
-RUN pytest
+RUN ["pytest","--ignore=database/test_db.py"]
