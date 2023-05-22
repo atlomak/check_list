@@ -6,7 +6,7 @@ from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
-from src.schemas.users import User, SafeUserCreate
+from src.schemas.users import UserInDB, SafeUserCreate
 from ._db import Base, get_session_factory
 
 
@@ -28,26 +28,26 @@ class UserDAO:
     def __init__(self, session_factory: Annotated[sessionmaker, Depends(get_session_factory)]):
         self.Session = session_factory
 
-    def get_user_by_id(self, id: int) -> User | None:
+    def get_user_by_id(self, id: int) -> UserInDB | None:
         with self.Session() as session:
             userdb: UserDB = session.query(UserDB).filter(UserDB.id == id).first()
             if userdb is None:
                 return None
-            user = User.from_orm(userdb)
+            user = UserInDB.from_orm(userdb)
             return user
 
-    def get_user_by_username(self, username: str) -> User | None:
+    def get_user_by_username(self, username: str) -> UserInDB | None:
         with self.Session() as session:
             userdb: UserDB = session.query(UserDB).filter(UserDB.username == username).first()
             if userdb is None:
                 return None
-            user = User.from_orm(userdb)
+            user = UserInDB.from_orm(userdb)
             return user
 
-    def get_all_users(self) -> list[User]:
+    def get_all_users(self) -> list[UserInDB]:
         with self.Session() as session:
             users = session.query(UserDB).all()
-            return [User.from_orm(user) for user in users]
+            return [UserInDB.from_orm(user) for user in users]
 
     def add_user(self, user: SafeUserCreate):
         try:
