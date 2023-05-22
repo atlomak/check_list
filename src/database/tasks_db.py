@@ -39,7 +39,7 @@ class TaskDAO:
 
     def get_task_by_id(self, id: int) -> Task | None:
         with self.Session() as session:
-            taskdb = session.query(TaskDB).get(id)
+            taskdb = session.get(TaskDB,id)
             if not taskdb:
                 return None
             task = Task.from_orm(taskdb)
@@ -74,7 +74,7 @@ class TaskDAO:
 
     def modify_task(self, id: int, *args, **kwargs):
         with self.Session() as session, session.begin():
-            taskdb = session.query(TaskDB).get(id)
+            taskdb = session.get(TaskDB,id)
             if not taskdb:
                 raise TaskNotFound(id)
             for key, value in kwargs.items():
@@ -82,7 +82,7 @@ class TaskDAO:
                     if key == "prerequisite_tasks":
                         taskdb.prerequisite_tasks = []
                         for prerequisite_task in value:
-                            taskdb.prerequisite_tasks.append(session.query(TaskDB).get(prerequisite_task.id))
+                            taskdb.prerequisite_tasks.append(session.get(TaskDB,prerequisite_task.id))
                     else:
                         setattr(taskdb, key, value)
                 else:

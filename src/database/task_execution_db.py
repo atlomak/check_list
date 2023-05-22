@@ -27,7 +27,7 @@ class TaskExecutionDAO:
 
     def get_task_execution_by_id(self, id: int) -> TaskExecution | None:
         with self.Session() as session:
-            task_execution = session.query(TaskExecutionDB).get(id)
+            task_execution = session.get(TaskExecutionDB,id)
             if task_execution is None:
                 return None
             task_execution = TaskExecution.from_orm(task_execution)
@@ -54,7 +54,7 @@ class TaskExecutionDAO:
 
     def delete_task_execution(self, id: int):
         with self.Session() as session, session.begin():
-            task_execution = session.query(TaskExecutionDB).get(id)
+            task_execution = session.get(TaskExecutionDB,id)
             if task_execution is None:
                 raise TaskExecutionNotFound(id)
             session.delete(task_execution)

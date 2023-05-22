@@ -87,5 +87,5 @@ def test_delete_tag(prepared_db: Session):
     tagdao = TagDAO(session_factory=SessionLocal)
     tagdao.delete_tag(1)
 
-    tag_from_db = prepared_db.query(TagDB).get(1)
+    tag_from_db = prepared_db.get(TagDB, 1)
     assert tag_from_db is None

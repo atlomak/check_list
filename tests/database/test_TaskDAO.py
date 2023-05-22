@@ -123,7 +123,7 @@ def test_task_modify_add_existing_prerequisites(prepared_db):
 
     taskdao.modify_task(2, prerequisite_tasks=[task])
 
-    task_from_db = prepared_db.query(TaskDB).get(2)
+    task_from_db = prepared_db.get(TaskDB, 2)
 
     assert task_from_db.name == "test2"
     assert task_from_db.description == "test2"

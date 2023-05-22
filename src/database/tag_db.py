@@ -24,7 +24,7 @@ class TagDAO:
 
     def get_tag_by_id(self, id: int) -> Tag | None:
         with self.Session() as session:
-            tagdb: TagDB = session.query(TagDB).get(id)
+            tagdb: TagDB | None = session.get(TagDB, id)
         if tagdb is None:
             return None
         tag = Tag.from_orm(tagdb)
@@ -54,7 +54,7 @@ class TagDAO:
 
     def delete_tag(self, id: int):
         with self.Session() as session, session.begin():
-            tagdb: TagDB = session.query(TagDB).get(id)
+            tagdb: TagDB = session.get(TagDB,id)
             if not tagdb:
                 raise TagNotFound(id)
             session.delete(tagdb)
