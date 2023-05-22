@@ -13,3 +13,10 @@ class Settings(BaseSettings):
 
 class SecuritySetting(BaseSettings):
     jwt_secret: str
+
+@lru_cache
+def get_settings():
+    return Settings()
+@lru_cache
+def get_security_settings():
+    return SecuritySetting()
