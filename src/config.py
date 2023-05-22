@@ -1,3 +1,5 @@
+from functools import lru_cache
+
 from pydantic import BaseSettings
 
 
@@ -9,4 +11,5 @@ class Settings(BaseSettings):
     db_port: int = 5432
 
 
-settings = Settings()
+class SecuritySetting(BaseSettings):
+    jwt_secret: str
