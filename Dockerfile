@@ -7,5 +7,5 @@ FROM base as src
 COPY src/ /code/src
 COPY tests/ /code/tests
 
-FROM src as test
-RUN ["pytest","--ignore=database/test_db.py"]
+FROM src as unittests
+RUN ["pytest","--ignore=tests/database/"]
