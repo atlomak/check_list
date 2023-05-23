@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import Annotated
 
 from fastapi import Depends
@@ -10,7 +11,7 @@ from src.schemas.users import User
 
 
 class JwtConverter:
-    def __init__(self, userdao: UserDAO, config: Annotated[src.config.Settings, Depends(get_settings)]):
+    def __init__(self, userdao: UserDAO, config: Annotated[src.config.SecuritySetting, Depends(get_settings)]):
         self.dao = userdao
         self.secret = config.jwt_secret
 
@@ -19,3 +20,12 @@ class JwtConverter:
         username = decoded.get("username")
         user = self.dao.get_user_by_username(username=username)
         return User.from_orm(user)
+    def get_jwt(self, user: User):
+        claims = {
+            "iss": "ska_checklist",
+            "iat": datetime.utcnow(),
+            "exp": datetime.utcnow() + timedelta(minutes=15),
+            "username": user.username,
+            "is_superuser": user.is_superuser,
+        }
+        return jwt.encode(claims=claims, key=self.secret)
